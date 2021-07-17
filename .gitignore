@@ -149,3 +149,7 @@ cython_debug/
 
 # Local History for Visual Studio Code
 .history/
+
+
+# the output of this script
+semantic_timeline.csv
