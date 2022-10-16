@@ -153,3 +153,4 @@ cython_debug/
 
 # the output of this script
 semantic_timeline.csv
+*.json
