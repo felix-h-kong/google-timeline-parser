@@ -7,7 +7,7 @@ from datetime import datetime
 # parse args
 dir_name = sys.argv[1]
 if sys.argv[2] == 'verbose' or sys.argv[2] == '--verbose':
-    verbose = sys.argv[2]
+    verbose = True
 else:
     verbose = False
 
@@ -40,24 +40,47 @@ for subdir, dirs, files in os.walk(dir_name):
                     continue
 
             locationObj = placeVisit['location']
-            locationName = locationObj['name'].replace('\n',' ').replace(',',' ')
+            try: 
+                locationName = locationObj['name'].replace('\n',' ').replace(',',' ')
+            except:
+                locationName = 'NO_LOCATION_NAME'
             try:
                 address = locationObj['address'].replace('\n',' ').replace(',',' ')
             except:
-                if verbose:
-                    print('Address not found.')
+                # if verbose:
+                    # print('Address not found.')
                 address = ''
                 
             confidence = locationObj['locationConfidence']
 
             durationObj = placeVisit['duration']
             # already determines local time?
-            startTime = datetime.fromtimestamp(int(durationObj['startTimestampMs'])/1e3) # convert from ms to to seconds
-            endTime = datetime.fromtimestamp(int(durationObj['endTimestampMs'])/1e3)
+            # startTime = datetime.fromtimestamp(int(durationObj['startTimestampMs'])/1e3) # convert from ms to to seconds
+            # endTime = datetime.fromtimestamp(int(durationObj['endTimestampMs'])/1e3)
+
+            # they switched to using formatted strings (e.g. "2021-08-03T03:34:12Z") instead of POSIX time.
+            # try to parse startTimestamp
+            try: 
+                startTime = datetime.strptime(durationObj['startTimestamp'],'%Y-%m-%dT%H:%M:%SZ') # no decimal places on the end
+            except:
+                try:
+                    startTime = datetime.strptime(durationObj['startTimestamp'],'%Y-%m-%dT%H:%M:%S.%fZ') # has decimal places on the end
+                except:
+                    raise ValueError
+            
+            # try to parse endTimestamp
+            try: 
+                endTime = datetime.strptime(durationObj['endTimestamp'],'%Y-%m-%dT%H:%M:%SZ') # no decimal places on the end
+            except:
+                try:
+                    datestr_format = '%Y-%m-%dT%H:%M:%S.%fZ'
+                    endTime = datetime.strptime(durationObj['endTimestamp'],'%Y-%m-%dT%H:%M:%S.%fZ') #has decimal places on the end
+                except:
+                    raise ValueError
 
             fout.write('{},{},{},{},{}\n'.format(startTime,endTime,locationName,address,confidence))
             if verbose:
-                print('Added entry: {} at {}'.format(startTime,locationObj['name']))
+                print('Added entry: {} at {}, address: {}'.format(startTime,locationName, address))
 
 if verbose:
     print('Done')
