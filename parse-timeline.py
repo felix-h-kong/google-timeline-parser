@@ -6,10 +6,11 @@ from datetime import datetime
 
 # parse args
 dir_name = sys.argv[1]
-if sys.argv[2] == 'verbose' or sys.argv[2] == '--verbose':
-    verbose = True
-else:
-    verbose = False
+verbose=True
+# if sys.argv[2] == 'verbose' or sys.argv[2] == '--verbose':
+#     verbose = True
+# else:
+#     verbose = False
 
 fout = open(dir_name + '/' + 'semantic_timeline.csv','w')
 fout.write('startTime,endTime,locationName,address,confidence\n')

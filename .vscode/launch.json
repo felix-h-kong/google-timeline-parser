@@ -18,7 +18,17 @@
             "program": "${file}",
             "console": "integratedTerminal",
             "args": ["~/Desktop/Semantic-location-history-2021", "verbose"]
+        },
+        {
+            "name": "location-query",
+            "type": "python",
+            "request": "launch",
+            "program": "location-query.py",
+            "console": "integratedTerminal",
+            "args": ["semantic-location-history/2024/semantic_timeline.csv"]
         }
+
+
 
     ]
 }
